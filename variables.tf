@@ -7,15 +7,15 @@ variable "instance_type" {
 }
 
 variable "min_size" {
-  default = 1
+  default = 2
 }
 
 variable "desired_capacity" {
-  default = 1
+  default = 2
 }
 
 variable "max_size" {
-  default = 1
+  default = 3
 }
 
 variable "docker_image" {
