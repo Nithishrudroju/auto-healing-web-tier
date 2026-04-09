@@ -69,9 +69,10 @@ resource "aws_autoscaling_group" "web" {
   min_size             = var.min_size
   max_size             = var.max_size
   desired_capacity     = var.desired_capacity
-  vpc_zone_identifier  = [data.aws_subnets.default.ids[0]]
-  health_check_type    = "EC2"
+  vpc_zone_identifier  = data.aws_subnets.default.ids
+  health_check_type    = "ELB"
   health_check_grace_period = 300
+  target_group_arns    = [aws_lb_target_group.web.arn]
   launch_template {
     id      = aws_launch_template.web.id
     version = "$Latest"
@@ -83,17 +84,38 @@ resource "aws_autoscaling_group" "web" {
   }
 }
 
-resource "aws_eip" "web" {
-  domain = "vpc"
+resource "aws_lb" "web" {
+  name_prefix      = "web"
+  internal         = false
+  load_balancer_type = "network"
+  subnets          = data.aws_subnets.default.ids
   tags = {
-    Name = "web-eip"
+    Name = "web-nlb"
   }
 }
 
-resource "aws_eip_association" "web" {
-  allocation_id = aws_eip.web.id
-  instance_id   = data.aws_instances.web.ids[0]
-  depends_on    = [aws_autoscaling_group.web]
+resource "aws_lb_target_group" "web" {
+  name_prefix = "web"
+  port        = 80
+  protocol    = "TCP"
+  vpc_id      = data.aws_vpc.default.id
+  health_check {
+    protocol = "TCP"
+    port     = "80"
+  }
+  tags = {
+    Name = "web-tg"
+  }
+}
+
+resource "aws_lb_listener" "web" {
+  load_balancer_arn = aws_lb.web.arn
+  port              = "80"
+  protocol          = "TCP"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web.arn
+  }
 }
 
 data "aws_instances" "web" {
