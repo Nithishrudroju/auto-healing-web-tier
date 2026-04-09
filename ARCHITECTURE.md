@@ -19,7 +19,8 @@
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
 │              Target Group (web-tg)                           │
-│              Health Check: HTTP GET /                        │
+│              Protocol: TCP:80                                 │
+│              Health Check: HTTP GET / (2h/2u, 30s interval)  │
 └──────────────────────────┬──────────────────────────────────┘
                            │
                            │
@@ -28,7 +29,7 @@
         ▼                                     ▼
 ┌──────────────────┐                 ┌──────────────────┐
 │   EC2 Instance   │                 │   EC2 Instance   │
-│   (t3.micro)     │                 │   (t3.micro)     │
+│   (t2.micro)     │                 │   (t2.micro)     │
 │                  │                 │   (Auto-scaled)  │
 │  ┌────────────┐  │                 │  ┌────────────┐  │
 │  │   Docker   │  │                 │  │   Docker   │  │
@@ -81,6 +82,7 @@
 
 ### EC2 Instances
 - AMI: Amazon Linux 2023
+- Instance Type: **t2.micro** (Free Tier eligible, 1 vCPU, 1 GB RAM)
 - Docker: Installed via user-data
 - Container: NGINX Alpine with custom HTML
 - Auto-restart: Container restarts on failure
