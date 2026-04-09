@@ -74,8 +74,8 @@
 
 ### Auto Scaling Group
 - Launch Template: Amazon Linux 2023 + Docker
-- Instance Type: t3.micro
-- Capacity: Min 1, Desired 1, Max 2
+- Instance Type: t2.micro
+- Capacity: Min 2, Desired 2, Max 3
 - Health Check: ELB with 300s grace period
 - Self-healing: Automatic instance replacement
 

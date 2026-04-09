@@ -12,13 +12,13 @@
   - Target Group and Listener
   
 - [x] **variables.tf** - Input variables with defaults
-  - aws_region (ap-south-1)
-  - instance_type (t3.micro)
-  - ASG sizing (min: 1, desired: 1, max: 2)
+  - aws_region (us-east-1)
+  - instance_type (t2.micro)
+  - ASG sizing (min: 2, desired: 2, max: 3)
   - docker_image (configurable)
 
 - [x] **outputs.tf** - Output values
-  - ALB DNS name for accessing application
+  - NLB DNS name for accessing application
 
 ### 2. Containerization
 - [x] **Dockerfile** - Minimal NGINX Alpine container
@@ -70,9 +70,10 @@
 - Target tracking based on HTTP health checks
 
 ### N+1 Capacity
-- Minimum: 1 instance
-- Desired: 1 instance
-- Maximum: 2 instances (allows scaling during healing)
+- Minimum: 2 instances
+- Desired: 2 instances
+- Maximum: 3 instances (allows scaling during healing)
+- Multi-AZ deployment for high availability
 
 ### Containerization
 - Docker-based deployment
@@ -81,10 +82,10 @@
 - Pull from public registry (Docker Hub/GHCR)
 
 ### Cost Optimization
-- t3.micro instances (~$10.50 AUD/month)
+- t2.micro instances (~$3.90 AUD/month per instance, after Free Tier)
 - Network Load Balancer (~$22.40 AUD/month)
-- Single instance minimum
-- Total: ~$34.30 AUD/month (can be reduced to <$20 with Free Tier)
+- Minimum 2 instances for N+1 redundancy
+- Total: ~$25-40 AUD/month depending on Free Tier eligibility
 
 ### Security
 - Security groups with least privilege
@@ -118,34 +119,30 @@ terraform plan
 terraform apply  # Optional
 
 # 4. Access application
-curl http://$(terraform output -raw alb_dns_name)
+curl http://$(terraform output -raw nlb_dns_name)
 
 # 5. Cleanup
 terraform destroy
 ```
 
-## 💰 Cost Breakdown (AUD - ap-south-1)
+## 💰 Cost Breakdown (AUD - us-east-1)
 
 | Resource | Quantity | Unit Cost | Monthly Cost |
 |----------|----------|-----------|--------------|
-| t3.micro EC2 | 1 | $10.50 | $10.50 |
+| t2.micro EC2 | 2 | $3.90 | $7.80 |
 | Network Load Balancer | 1 | $22.40 | $22.40 |
-| Data Transfer (1GB) | 1 | $1.40 | $1.40 |
-| **Total** | | | **$34.30** |
+| Data Transfer (2GB) | 1 | $2.80 | $2.80 |
+| **Total (after Free Tier)** | | | **$32.00** |
 
-### To Achieve <$20 AUD/month:
-1. **Use AWS Free Tier** (if eligible)
-   - 750 hours t2.micro free
-   - Reduces to ~$22.40/month (NLB only)
+### With AWS Free Tier (first 12 months):
+- 750 hours t2.micro free (covers 1 of 2 instances)
+- Reduces monthly cost to ~$25.20
+- NLB charges still apply
 
-2. **Remove Load Balancer** (use Elastic IP)
-   - Single EC2 with public IP
-   - Reduces to ~$10.50/month
-   - Still has auto-scaling self-healing
-
-3. **Use Spot Instances**
-   - 70% cost reduction
-   - Reduces to ~$10/month total
+### To Optimize Further:
+1. **Single Instance Setup**: Remove NLB, use Elastic IP (~$1-10/month)
+2. **Spot Instances**: Use 70% cheaper Spot instances (~$10/month)
+3. **Regional Arbitrage**: Deploy in cheaper region (ae-south-1)
 
 ## 📊 Architecture Summary
 

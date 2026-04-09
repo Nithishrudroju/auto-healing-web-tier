@@ -49,7 +49,7 @@ docker push ghcr.io/YOUR_GITHUB_USERNAME/auto-healing-web:latest
 # Option 1: Environment variables
 export AWS_ACCESS_KEY_ID="your-access-key"
 export AWS_SECRET_ACCESS_KEY="your-secret-key"
-export AWS_DEFAULT_REGION="ap-south-1"
+export AWS_DEFAULT_REGION="us-east-1"
 
 # Option 2: AWS CLI
 aws configure
@@ -119,13 +119,13 @@ Wait 5-10 minutes for:
 
 #### 4.2 Get Load Balancer URL
 ```bash
-terraform output alb_dns_name
+terraform output nlb_dns_name
 ```
 
 #### 4.3 Test Application
 ```bash
 # Wait 2-3 minutes for health checks
-curl http://$(terraform output -raw alb_dns_name)
+curl http://$(terraform output -raw nlb_dns_name)
 ```
 
 Or open in browser:
