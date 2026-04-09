@@ -43,9 +43,9 @@ resource "aws_security_group" "web" {
 }
 
 resource "aws_launch_template" "web" {
-  name_prefix   = "web-"
-  image_id      = data.aws_ami.amazon_linux.id
-  instance_type = var.instance_type
+  name_prefix            = "web-"
+  image_id               = data.aws_ami.amazon_linux.id
+  instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.web.id]
   user_data = base64encode(<<-EOF
 #!/bin/bash
@@ -65,14 +65,14 @@ EOF
 }
 
 resource "aws_autoscaling_group" "web" {
-  name                 = "web-asg"
-  min_size             = var.min_size
-  max_size             = var.max_size
-  desired_capacity     = var.desired_capacity
-  vpc_zone_identifier  = data.aws_subnets.default.ids
-  health_check_type    = "ELB"
+  name                      = "web-asg"
+  min_size                  = var.min_size
+  max_size                  = var.max_size
+  desired_capacity          = var.desired_capacity
+  vpc_zone_identifier       = data.aws_subnets.default.ids
+  health_check_type         = "ELB"
   health_check_grace_period = 300
-  target_group_arns    = [aws_lb_target_group.web.arn]
+  target_group_arns         = [aws_lb_target_group.web.arn]
   launch_template {
     id      = aws_launch_template.web.id
     version = "$Latest"
@@ -85,10 +85,10 @@ resource "aws_autoscaling_group" "web" {
 }
 
 resource "aws_lb" "web" {
-  name_prefix      = "web"
-  internal         = false
+  name_prefix        = "web"
+  internal           = false
   load_balancer_type = "network"
-  subnets          = data.aws_subnets.default.ids
+  subnets            = data.aws_subnets.default.ids
   tags = {
     Name = "web-nlb"
   }

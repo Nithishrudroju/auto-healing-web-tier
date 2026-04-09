@@ -19,5 +19,5 @@ variable "max_size" {
 }
 
 variable "docker_image" {
-  default = "your-dockerhub-username/auto-healing-web:latest"
+  default = "nithishkumar111/auto-healing-web:latest"
 }
