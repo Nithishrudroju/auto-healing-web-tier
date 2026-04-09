@@ -44,7 +44,7 @@
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
 │           Auto Scaling Group (ASG)                           │
-│           Min: 1, Desired: 1, Max: 2                         │
+│           Min: 2, Desired: 2, Max: 3                         │
 │           Health Check Type: ELB                             │
 │           Self-Healing Enabled                               │
 └─────────────────────────────────────────────────────────────┘
