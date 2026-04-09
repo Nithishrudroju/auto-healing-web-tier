@@ -100,8 +100,13 @@ resource "aws_lb_target_group" "web" {
   protocol    = "TCP"
   vpc_id      = data.aws_vpc.default.id
   health_check {
-    protocol = "TCP"
-    port     = "80"
+    protocol            = "HTTP"
+    port                = "80"
+    path                = "/"
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    interval            = 30
   }
   tags = {
     Name = "web-tg"
