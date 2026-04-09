@@ -1,0 +1,7 @@
+*.tf
+*.tfvars
+.terraform/
+.git/
+README.md
+*.md
+userdata.sh

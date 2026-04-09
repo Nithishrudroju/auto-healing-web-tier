@@ -1,0 +1,8 @@
+# Copy this file to terraform.tfvars and update values
+
+aws_region        = "us-east-1"
+instance_type     = "t2.micro"
+min_size          = 1
+desired_capacity  = 1
+max_size          = 1
+docker_image      = "your-dockerhub-username/auto-healing-web:latest"
