@@ -40,13 +40,13 @@ EC2 t2.micro (Docker + NGINX Container) x 2+
 
 Your IAM user needs the following permissions. Attach the policy to your user:
 
-```bash
-aws iam attach-user-policy \
-  --user-name nithish-test \
+```powershell
+aws iam attach-user-policy `
+  --user-name nithish-test `
   --policy-arn arn:aws:iam::aws:policy/AmazonEC2FullAccess
 
-aws iam attach-user-policy \
-  --user-name nithish-test \
+aws iam attach-user-policy `
+  --user-name nithish-test `
   --policy-arn arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess
 ```
 
@@ -59,7 +59,7 @@ aws iam attach-user-policy \
 
 Navigate to the project directory and build the Docker image:
 
-```bash
+```powershell
 cd C:\Users\Windows\OneDrive\Desktop\DevOps\auto-healing-web-tier
 
 # Build the Docker image
@@ -81,14 +81,14 @@ docker_image = "your-dockerhub-username/auto-healing-web:latest"
 
 Ensure your AWS credentials are configured:
 
-```bash
+```powershell
 # Option 1: Using AWS CLI
 aws configure
 
-# Option 2: Using environment variables
-set AWS_ACCESS_KEY_ID=your-access-key
-set AWS_SECRET_ACCESS_KEY=your-secret-key
-set AWS_DEFAULT_REGION=us-east-1
+# Option 2: Using environment variables (PowerShell)
+$env:AWS_ACCESS_KEY_ID="your-access-key"
+$env:AWS_SECRET_ACCESS_KEY="your-secret-key"
+$env:AWS_DEFAULT_REGION="us-east-1"
 ```
 
 ### Step 4: Review Terraform Configuration
@@ -193,20 +193,20 @@ http://<nlb-dns-name>
 
 Test the self-healing capability:
 
-```bash
+```powershell
 # Get running instance IDs
-aws ec2 describe-instances \
-  --filters "Name=tag:aws:autoscaling:groupName,Values=web-asg" \
-            "Name=instance-state-name,Values=running" \
-  --query "Reservations[].Instances[].InstanceId" \
+aws ec2 describe-instances `
+  --filters "Name=tag:aws:autoscaling:groupName,Values=web-asg" `
+            "Name=instance-state-name,Values=running" `
+  --query "Reservations[].Instances[].InstanceId" `
   --output table
 
 # Terminate one instance to trigger auto-healing
 aws ec2 terminate-instances --instance-ids <instance-id>
 
 # Watch ASG launch replacement (takes 3-5 minutes)
-aws autoscaling describe-auto-scaling-groups \
-  --auto-scaling-group-names web-asg \
+aws autoscaling describe-auto-scaling-groups `
+  --auto-scaling-group-names web-asg `
   --query "AutoScalingGroups[0].Instances[]"
 ```
 
@@ -300,9 +300,18 @@ Type `yes` when prompted to confirm.
 
 **Solutions**:
 1. Wait 2-3 minutes for instances to pass health checks
-2. Verify security group allows port 80: `aws ec2 describe-security-groups --group-ids <sg-id>`
-3. Check instance status: `aws ec2 describe-instances --filters "Name=tag:aws:autoscaling:groupName,Values=web-asg"`
-4. Check target health: `aws elbv2 describe-target-health --target-group-arn <tg-arn>`
+2. Verify security group allows port 80:
+   ```powershell
+   aws ec2 describe-security-groups --group-ids <sg-id>
+   ```
+3. Check instance status:
+   ```powershell
+   aws ec2 describe-instances --filters "Name=tag:aws:autoscaling:groupName,Values=web-asg"
+   ```
+4. Check target health:
+   ```powershell
+   aws elbv2 describe-target-health --target-group-arn <tg-arn>
+   ```
 
 ### Issue: Docker Container Not Starting
 
@@ -315,7 +324,10 @@ Type `yes` when prompted to confirm.
    sudo docker ps -a
    sudo docker logs <container-id>
    ```
-2. Verify Docker image is accessible: `docker pull nithishkumar111/auto-healing-web:latest`
+2. Verify Docker image is accessible locally:
+   ```powershell
+   docker pull nithishkumar111/auto-healing-web:latest
+   ```
 3. Check user-data script in launch template
 
 ### Issue: Terraform State Lock
@@ -323,9 +335,9 @@ Type `yes` when prompted to confirm.
 **Error**: `Error acquiring the state lock`
 
 **Solution**: 
-```bash
+```powershell
 # Remove lock file
-del .terraform.tfstate.lock.info
+Remove-Item .terraform.tfstate.lock.info
 
 # Or force unlock (use with caution)
 terraform force-unlock <lock-id>
